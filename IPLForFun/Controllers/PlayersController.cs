@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
@@ -10,26 +11,25 @@ using IPLForFun.Models;
 
 namespace IPLForFun.Controllers
 {
-    [Authorize]
     public class PlayersController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Players
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
             var players = db.Players.Include(p => p.Team);
-            return View(players.ToList());
+            return View(await players.ToListAsync());
         }
 
         // GET: Players/Details/5
-        public ActionResult Details(int? id)
+        public async Task<ActionResult> Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Player player = db.Players.Find(id);
+            Player player = await db.Players.FindAsync(id);
             if (player == null)
             {
                 return HttpNotFound();
@@ -49,12 +49,12 @@ namespace IPLForFun.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "PlayerId,Name,TeamId,IsApproved")] Player player)
+        public async Task<ActionResult> Create([Bind(Include = "PlayerId,Name,TeamId")] Player player)
         {
             if (ModelState.IsValid)
             {
                 db.Players.Add(player);
-                db.SaveChanges();
+                await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
 
@@ -63,13 +63,13 @@ namespace IPLForFun.Controllers
         }
 
         // GET: Players/Edit/5
-        public ActionResult Edit(int? id)
+        public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Player player = db.Players.Find(id);
+            Player player = await db.Players.FindAsync(id);
             if (player == null)
             {
                 return HttpNotFound();
@@ -83,12 +83,12 @@ namespace IPLForFun.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "PlayerId,Name,TeamId,IsApproved")] Player player)
+        public async Task<ActionResult> Edit([Bind(Include = "PlayerId,Name,TeamId")] Player player)
         {
             if (ModelState.IsValid)
             {
                 db.Entry(player).State = EntityState.Modified;
-                db.SaveChanges();
+                await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             ViewBag.TeamId = new SelectList(db.Teams, "TeamId", "Name", player.TeamId);
@@ -96,13 +96,13 @@ namespace IPLForFun.Controllers
         }
 
         // GET: Players/Delete/5
-        public ActionResult Delete(int? id)
+        public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Player player = db.Players.Find(id);
+            Player player = await db.Players.FindAsync(id);
             if (player == null)
             {
                 return HttpNotFound();
@@ -113,14 +113,18 @@ namespace IPLForFun.Controllers
         // POST: Players/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Player player = db.Players.Find(id);
+            Player player = await db.Players.FindAsync(id);
             db.Players.Remove(player);
-            db.SaveChanges();
+            await db.SaveChangesAsync();
             return RedirectToAction("Index");
         }
-
+         public ActionResult GetPlayersForTeam(int TeamId)
+        {
+            ViewBag.TeamName = db.Teams.Where(t => t.TeamId == TeamId).Select(d => d.Code + " - " + d.Name).FirstOrDefault();
+            return PartialView(db.Players.Where(p => p.TeamId == TeamId).ToList());
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

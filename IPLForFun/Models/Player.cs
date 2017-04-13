@@ -13,11 +13,13 @@ namespace IPLForFun.Models
         public int PlayerId { get; set; }
         [Required]
         public string Name { get; set; }
-        [Required]
+
         [ForeignKey("TeamId")]
         public virtual Team Team { get; set; }
+        [Required]
         public int TeamId { get; set; }
-        public bool IsApproved { get; set; }
+
+        //public bool IsApproved { get; set; }
 
     }
 }

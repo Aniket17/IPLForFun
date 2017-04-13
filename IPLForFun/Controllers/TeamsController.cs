@@ -12,7 +12,7 @@ using IPLForFun.Models;
 namespace IPLForFun.Controllers
 {
     [Authorize]
-    public class TeamsController : Controller
+    public class TeamsController : BaseController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
@@ -124,6 +124,11 @@ namespace IPLForFun.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+        public ActionResult GetPlayersForTeam(int teamId, int matchId)
+        {
+            ViewBag.MatchId = matchId;
+            return PartialView("GetPlayersForTeam",db.Players.Where(t => t.TeamId == teamId).ToList());
         }
     }
 }

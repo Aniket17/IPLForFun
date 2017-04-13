@@ -13,5 +13,11 @@ namespace IPLForFun.Controllers
         {
             return View();
         }
+
+        public ActionResult SelectPlayer(int playerId, int matchId)
+        {
+            ModelState.AddModelError("CustomError", "What The fuck just happened");
+            return View("Index");
+        }
     }
 }

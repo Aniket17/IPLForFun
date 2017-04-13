@@ -1,0 +1,25 @@
+﻿@model IEnumerable<IPLForFun.Models.Match>
+
+<div class="row">
+    <h2>Today's Matches</h2>
+    <div class="col-sm-12">
+        @foreach (var match in Model)
+        {
+            <div class="col-sm-6">
+                <h4>@match.MatchDescription</h4>
+                <div class="alert alert-info">
+                    <p>@match.Date.ToShortDateString() - @match.Time.ToShortTimeString()</p>
+                </div>
+            </div>
+            <h3>Squad</h3>
+            <div class="col-sm-3">
+                <h4>@match.Guest.Name</h4>
+                @{Html.RenderAction("GetPlayersForTeam", "Teams", new { teamId = match.GuestTeamId, matchId = match.MatchId });}
+            </div>
+            <div class="col-sm-3">
+                <h4>@match.Host.Name</h4>
+                @{Html.RenderAction("GetPlayersForTeam", "Teams", new { teamId = match.HostTeamId, matchId = match.MatchId });}
+            </div>
+        }
+    </div>
+</div>

@@ -11,13 +11,17 @@ namespace IPLForFun.Models
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int MatchId { get; set; }
-        [Required]
+
         [ForeignKey("HostTeamId")]
         public virtual Team Host { get; set; }
-        [Required]
+
         [ForeignKey("GuestTeamId")]
         public virtual Team Guest { get; set; }
+        [Required]
+        [Display(Name = "Host Team")]
         public int HostTeamId { get; set; }
+        [Required]
+        [Display(Name = "Guest Team")]
         public int GuestTeamId { get; set; }
 
         [NotMapped]

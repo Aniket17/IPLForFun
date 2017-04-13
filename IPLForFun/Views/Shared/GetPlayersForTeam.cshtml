@@ -1,0 +1,23 @@
+﻿@model IEnumerable<IPLForFun.Models.Player>
+@Html.ValidationMessage("CustomError")
+<table class="table">
+    <tr>
+        <th>
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+
+            <td>
+                @Html.ActionLink("Select", "SelectPlayer", "Home", new { playerId = item.PlayerId, matchId = ViewBag.MatchId },null)
+            </td>
+        </tr>
+    }
+
+</table>

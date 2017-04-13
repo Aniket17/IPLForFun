@@ -7,13 +7,18 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using IPLForFun.Models;
+using IPLForFun.Services;
 
 namespace IPLForFun.Controllers
 {
-    public class MatchesController : Controller
+    public class MatchesController : BaseController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
-
+        private MatchesService matchesService;
+        public MatchesController()
+        {
+            matchesService = matchesService ?? new MatchesService(db);
+        }
         // GET: Matches
         public ActionResult Index()
         {
@@ -122,6 +127,12 @@ namespace IPLForFun.Controllers
             db.Matches.Remove(match);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        public ActionResult GetCurrentMatches()
+        {
+
+            return PartialView(matchesService.GetCurrentMatches(""));
         }
 
         protected override void Dispose(bool disposing)
